@@ -19,22 +19,11 @@ var (
 	cert   = flag.String("cert", "", "certificate pathname")
 	key    = flag.String("key", "", "private key pathname")
 	config = flag.String("config", "", "pathname of JSON configuration file")
-	listen = flag.String("listen", "127.0.0.1:8000", "listen address")
+	listen = flag.String("listen", ":8000", "listen address")
 
 	hMux       tigertonic.HostServeMux
 	mux, nsMux *tigertonic.TrieServeMux
 )
-
-// A version string that can be set with
-//
-//     -ldflags "-X main.Version VERSION"
-//
-// at compile-time.
-var Version string
-
-type context struct {
-	Username string
-}
 
 func init() {
 	flag.Usage = func() {
@@ -43,34 +32,19 @@ func init() {
 	}
 	log.SetFlags(log.Ltime | log.Lmicroseconds | log.Lshortfile)
 
-	// We'll use this CORSBuilder to set Access-Control-Allow-Origin headers
-	// on certain endpoints.
-	cors := tigertonic.NewCORSBuilder().AddAllowedOrigins("*")
-
 	// Register endpoints defined in top-level functions below with example
 	// uses of Timed go-metrics wrapper.
 	mux = tigertonic.NewTrieServeMux()
 	mux.Handle(
 		"GET",
-		"/stuff/{id}",
-		cors.Build(tigertonic.Timed(
-			tigertonic.Marshaled(get),
-			"GET-stuff-id",
-			nil,
-		)),
+		"/incidents",
+		tigertonic.Timed(tigertonic.Marshaled(get), "incidents", nil),
 	)
-
-	// Example use of the version endpoint.
-	mux.Handle("GET", "/version", tigertonic.Version(Version))
 
 	// Example use of namespaces.
 	nsMux = tigertonic.NewTrieServeMux()
 	nsMux.HandleNamespace("", mux)
 	nsMux.HandleNamespace("/1.0", mux)
-
-	// Example use of virtual hosts.
-	hMux = tigertonic.NewHostServeMux()
-	hMux.Handle("example.com", nsMux)
 
 }
 
@@ -95,21 +69,8 @@ func main() {
 
 		// Example use of go-metrics to track HTTP status codes.
 		tigertonic.CountedByStatus(
-
-			// Example use of request logging, redacting the word SECRET
-			// wherever it appears.
-			tigertonic.Logged(
-
-				// Example use of WithContext, which is required in order to
-				// use Context within any handlers.  The second argument is a
-				// zero value of the type to be used for all actual request
-				// contexts.
-				tigertonic.WithContext(hMux, context{}),
-
-				func(s string) string {
-					return s
-				},
-			),
+			// Example use of request logging
+			tigertonic.Logged(nsMux, nil),
 			"http",
 			nil,
 		),
@@ -134,7 +95,7 @@ func main() {
 
 }
 
-// GET /stuff/{id}
+// GET /incidents
 func get(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *MyResponse, error) {
-	return http.StatusOK, nil, &MyResponse{u.Query().Get("id"), "STUFF"}, nil
+	return http.StatusOK, nil, &MyResponse{"FIRE", "STUFF"}, nil
 }
