@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	_ "expvar" // Imported for side-effect of handling /debug/vars.
 	"flag"
 	"fmt"
@@ -13,7 +12,6 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 )
 
@@ -53,11 +51,6 @@ func init() {
 	// uses of Timed go-metrics wrapper.
 	mux = tigertonic.NewTrieServeMux()
 	mux.Handle(
-		"POST",
-		"/stuff",
-		tigertonic.Timed(tigertonic.Marshaled(create), "POST-stuff", nil),
-	)
-	mux.Handle(
 		"GET",
 		"/stuff/{id}",
 		cors.Build(tigertonic.Timed(
@@ -66,45 +59,6 @@ func init() {
 			nil,
 		)),
 	)
-	mux.Handle(
-		"POST",
-		"/stuff/{id}",
-		tigertonic.Timed(tigertonic.Marshaled(update), "POST-stuff-id", nil),
-	)
-
-	// Example use of the If middleware to forbid access to certain endpoints
-	// under certain conditions (certain conditions being all conditions in
-	// this example).
-	mux.Handle("GET", "/forbidden", cors.Build(tigertonic.If(
-		func(*http.Request) (http.Header, error) {
-			return nil, tigertonic.Forbidden{errors.New("forbidden")}
-		},
-		tigertonic.Marshaled(func(*url.URL, http.Header, interface{}) (int, http.Header, interface{}, error) {
-			return http.StatusOK, nil, &MyResponse{}, nil
-		}),
-	)))
-
-	// Example use of the HTTPBasicAuth middleware to require a username and
-	// password for access to certain endpoints.
-	mux.Handle("GET", "/authorized", tigertonic.HTTPBasicAuth(
-		map[string]string{"username": "password"},
-		"Tiger Tonic",
-		tigertonic.Marshaled(func(*url.URL, http.Header, interface{}) (int, http.Header, interface{}, error) {
-			return http.StatusOK, nil, &MyResponse{}, nil
-		}),
-	))
-
-	// Example use of the First middleware and Context to share per-request
-	// state across handlers.  The context type is set in WithContext below.
-	mux.Handle("GET", "/context", tigertonic.If(
-		func(r *http.Request) (http.Header, error) {
-			tigertonic.Context(r).(*context).Username = "rcrowley"
-			return nil, nil
-		},
-		tigertonic.Marshaled(func(u *url.URL, h http.Header, _ interface{}, c *context) (int, http.Header, interface{}, error) {
-			return http.StatusOK, nil, &MyResponse{ID: c.Username}, nil
-		}),
-	))
 
 	// Example use of the version endpoint.
 	mux.Handle("GET", "/version", tigertonic.Version(Version))
@@ -117,11 +71,6 @@ func init() {
 	// Example use of virtual hosts.
 	hMux = tigertonic.NewHostServeMux()
 	hMux.Handle("example.com", nsMux)
-
-	// Register http.DefaultServeMux on a subdomain for access to
-	// standard library features such as /debug/pprof and /debug/vars
-	// as imported at the top of this file.
-	hMux.Handle("go.example.com", http.DefaultServeMux)
 
 }
 
@@ -158,7 +107,7 @@ func main() {
 				tigertonic.WithContext(hMux, context{}),
 
 				func(s string) string {
-					return strings.Replace(s, "SECRET", "REDACTED", -1)
+					return s
 				},
 			),
 			"http",
@@ -185,24 +134,7 @@ func main() {
 
 }
 
-// POST /stuff
-func create(u *url.URL, h http.Header, rq *MyRequest) (int, http.Header, *MyResponse, error) {
-	return http.StatusCreated, http.Header{
-		"Content-Location": {fmt.Sprintf(
-			"%s://%s/1.0/stuff/%s", // TODO Don't hard-code this.
-			u.Scheme,
-			u.Host,
-			rq.ID,
-		)},
-	}, &MyResponse{rq.ID, rq.Stuff}, nil
-}
-
 // GET /stuff/{id}
 func get(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *MyResponse, error) {
 	return http.StatusOK, nil, &MyResponse{u.Query().Get("id"), "STUFF"}, nil
-}
-
-// POST /stuff/{id}
-func update(u *url.URL, h http.Header, rq *MyRequest) (int, http.Header, *MyResponse, error) {
-	return http.StatusAccepted, nil, &MyResponse{u.Query().Get("id"), "STUFF"}, nil
 }
