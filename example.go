@@ -1,9 +1,11 @@
 package main
 
 import (
+	"database/sql"
 	_ "expvar" // Imported for side-effect of handling /debug/vars.
 	"flag"
 	"fmt"
+	_ "github.com/lib/pq"
 	"github.com/rcrowley/go-metrics"
 	"github.com/rcrowley/go-tigertonic"
 	"log"
@@ -14,6 +16,8 @@ import (
 	"os/signal"
 	"syscall"
 )
+
+var db *sql.DB // Global for database connection
 
 var (
 	cert   = flag.String("cert", "", "certificate pathname")
@@ -45,7 +49,6 @@ func init() {
 	nsMux = tigertonic.NewTrieServeMux()
 	nsMux.HandleNamespace("", mux)
 	nsMux.HandleNamespace("/1.0", mux)
-
 }
 
 func main() {
@@ -63,6 +66,14 @@ func main() {
 	if err := tigertonic.Configure(*config, c); nil != err {
 		log.Fatalln(err)
 	}
+
+	// Open up a connection to the DB (well, just get the pool going)
+	var err error
+	db, err = sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 
 	server := tigertonic.NewServer(
 		*listen,
@@ -97,5 +108,40 @@ func main() {
 
 // GET /incidents
 func get(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *MyResponse, error) {
-	return http.StatusOK, nil, &MyResponse{"FIRE", "STUFF"}, nil
+	iNum, _ := GetNumIncidents()
+	rNum, _ := GetNumReports()
+	resp := &MyResponse{iNum, rNum}
+	return http.StatusOK, nil, resp, nil
+}
+
+// Fetch count of incidents
+func GetNumIncidents() (int, error) {
+	stmt, err := db.Prepare(`SELECT COUNT(*) FROM incidents`)
+	if err != nil {
+		return 0, err
+	}
+	defer stmt.Close()
+
+	var count int
+	err = stmt.QueryRow().Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+// Fetch count of reports
+func GetNumReports() (int, error) {
+	stmt, err := db.Prepare(`SELECT COUNT(*) FROM reports`)
+	if err != nil {
+		return 0, err
+	}
+	defer stmt.Close()
+
+	var count int
+	err = stmt.QueryRow().Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }

@@ -1,6 +1,6 @@
 package main
 
 type MyResponse struct {
-	ID    string      `json:"id"`
-	Stuff interface{} `json:"stuff"`
+	IncidentCount int `json:"incidentCount"`
+	ReportCount   int `json:"reportCount"`
 }
