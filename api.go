@@ -1,5 +1,49 @@
 package main
 
+// Returns a slice of ReportFeatures. The slice contains the latest report for all incidents marked as current
+func latestReportsForCurrentIncidents() (reports []ReportFeature, err error) {
+	// NOTE some of this is copied from reportFeatureForUUID
+
+	// Select the latest report for all current incidents
+	stmt, err := db.Prepare(`SELECT DISTINCT ON (i.uuid) r.uuid, r.title, ST_Y(r.geometry) as lat, ST_X(r.geometry) as lng
+                            FROM incidents i
+                            JOIN reports r ON i.uuid = r.incident_uuid
+                            WHERE i.current = true
+                            ORDER BY i.uuid, r.created_at DESC`)
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query()
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+		var lat string
+		var lng string
+		var rp ReportProperties
+		var rf ReportFeature
+
+		err = rows.Scan(&rf.UUID, &rp.Title, &lat, &lng)
+		if err != nil {
+			return
+		}
+
+		// Report properties needs to be placed within a ReportFeature
+		// and the ReportFeature needs to be adjusted based on rp content
+		rf.Type = "Feature"
+		rf.Properties = rp
+		rf.Geometry = pointFromCoordinates(lng, lat)
+
+		reports = append(reports, rf)
+	}
+
+	return
+}
+
+// Takes a slice of report features and returns it wrapped in a GeoJSON FeatureCollection
 func reportFeatureCollectionForReportFeatures(rf []ReportFeature) (rfc ReportFeatureCollection) {
 	rfc = ReportFeatureCollection{"FeatureCollection", rf}
 

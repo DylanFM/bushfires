@@ -42,7 +42,13 @@ func init() {
 	mux.Handle(
 		"GET",
 		"/reports/{uuid}",
-		tigertonic.Timed(tigertonic.Marshaled(get), "Get-report-UUID", nil),
+		tigertonic.Timed(tigertonic.Marshaled(getReport), "Get-report-UUID", nil),
+	)
+
+	mux.Handle(
+		"GET",
+		"/incidents",
+		tigertonic.Timed(tigertonic.Marshaled(getIncidents), "Get-incidents", nil),
 	)
 
 	// Example use of namespaces.
@@ -107,13 +113,25 @@ func main() {
 }
 
 // GET /reports/:uuid
-// Returns a GeoJSON Feature for the given report UUID.
-func get(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *ReportFeatureCollection, error) {
+// Returns a GeoJSON FeatureCollection for the given report UUID.
+func getReport(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *ReportFeatureCollection, error) {
 
 	// TODO handle errors and return 404 (or appropriate)
 	rf, _ := reportFeatureForUUID(u.Query().Get("uuid"))
 
 	rfc := reportFeatureCollectionForReportFeatures([]ReportFeature{rf})
+
+	return http.StatusOK, nil, &rfc, nil
+}
+
+// GET /incidents
+// Returns a GeoJSON FeatureCollection of incidents marked as current
+func getIncidents(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *ReportFeatureCollection, error) {
+
+	// TODO error handling
+	rfs, _ := latestReportsForCurrentIncidents()
+
+	rfc := reportFeatureCollectionForReportFeatures(rfs)
 
 	return http.StatusOK, nil, &rfc, nil
 }
