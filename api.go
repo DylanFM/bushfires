@@ -1,5 +1,9 @@
 package main
 
+import (
+	"time"
+)
+
 // Returns a slice of ReportFeatures. The slice contains the latest report for all incidents marked as current
 func latestReportsForCurrentIncidents() (reports []ReportFeature, err error) {
 	// NOTE some of this is copied from reportFeatureForUUID
@@ -57,22 +61,27 @@ type ReportFeatureCollection struct {
 }
 
 // Takes a UUID and returns a ReportFeature representing that report
-func reportFeatureForUUID(uuid string) (rf ReportFeature, err error) {
-	rf = ReportFeature{}
+func reportFeatureForUUID(uuid string) (ReportFeature, error) {
+	rf := ReportFeature{}
 
-	stmt, err := db.Prepare(`SELECT title, ST_Y(geometry) as lat, ST_X(geometry) as lng FROM reports WHERE uuid = $1`)
+	stmt, err := db.Prepare(`SELECT incident_uuid, guid, title, link, category, pubdate,
+	                                updated, alert_level, location, council_area, status, fire_type,
+	                                fire, size, responsible_agency, extra,
+	                                ST_Y(geometry) as lat, ST_X(geometry) as lng
+                              FROM reports
+                              WHERE uuid = $1`)
 	if err != nil {
-		return
+		return rf, err
 	}
 	defer stmt.Close()
 
 	var lat string
 	var lng string
 	var rp ReportProperties
-	err = stmt.QueryRow(uuid).Scan(&rp.Title, &lat, &lng)
+
+	err = stmt.QueryRow(uuid).Scan(&rp.IncidentUUID, &rp.Guid, &rp.Title, &rp.Link, &rp.Category, &rp.Pubdate, &rp.Updated, &rp.AlertLevel, &rp.Location, &rp.CouncilArea, &rp.Status, &rp.FireType, &rp.Fire, &rp.Size, &rp.ResponsibleAgency, &rp.Extra, &lat, &lng)
 	if err != nil {
-		// err very well may be sql.ErrNoRows which says that no rows matched the uuid
-		return
+		return rf, err
 	}
 
 	// Report properties needs to be placed within a ReportFeature
@@ -82,7 +91,7 @@ func reportFeatureForUUID(uuid string) (rf ReportFeature, err error) {
 	rf.UUID = uuid
 	rf.Geometry = pointFromCoordinates(lng, lat)
 
-	return
+	return rf, nil
 }
 
 // Takes a lat and lng and returns a GeoJSON Point with those coordinates
@@ -105,28 +114,23 @@ type ReportFeature struct {
 
 // ReportProperties is a collection of properties for an individual report included in a ReportFeature GeoJSON response.
 type ReportProperties struct {
-	// IncidentUUID      string
-	// Hash              string
-	// Guid              string
-	Title string `json:"title"`
-	//Link              string
-	//Category          string
-	//Pubdate           time.Time
-	//Description       string
-	//Updated           time.Time
-	//AlertLevel        string
-	//Location          string
-	//CouncilArea       string
-	//Status            string
-	//FireType          string
-	//Fire              bool
-	//Size              string
-	//ResponsibleAgency string
-	//Extra             string
-	//Points            string // Geojson
+	IncidentUUID      string    `json:"incidentUuid"`
+	Guid              string    `json:"guid"`
+	Title             string    `json:"title"`
+	Link              string    `json:"link"`
+	Category          string    `json:"category"`
+	Pubdate           time.Time `json:"pubdate"`
+	Updated           time.Time `json:"updated"`
+	AlertLevel        string    `json:"alertLevel"`
+	Location          string    `json:"location"`
+	CouncilArea       string    `json:"councilArea"`
+	Status            string    `json:"status"`
+	FireType          string    `json:"fireType"`
+	Fire              bool      `json:"fire"`
+	Size              string    `json:"size"`
+	ResponsibleAgency string    `json:"responsibleAgency"`
+	Extra             string    `json:"extra"`
 	//Polygons          []string
-	//CreatedAt         time.Time
-	//UpdatedAt         time.Time
 }
 
 // Point is a lng, lat coordinate pair used for the GeoJSON geometry type Point.

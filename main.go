@@ -116,8 +116,12 @@ func main() {
 // Returns a GeoJSON FeatureCollection for the given report UUID.
 func getReport(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *ReportFeatureCollection, error) {
 
-	// TODO handle errors and return 404 (or appropriate)
-	rf, _ := reportFeatureForUUID(u.Query().Get("uuid"))
+	rf, err := reportFeatureForUUID(u.Query().Get("uuid"))
+	if err != nil {
+		// Defaulting to 500
+		// TODO handle 404
+		return 0, nil, nil, tigertonic.InternalServerError{err}
+	}
 
 	rfc := reportFeatureCollectionForReportFeatures([]ReportFeature{rf})
 
@@ -128,8 +132,11 @@ func getReport(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *Rep
 // Returns a GeoJSON FeatureCollection of incidents marked as current
 func getIncidents(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *ReportFeatureCollection, error) {
 
-	// TODO error handling
-	rfs, _ := latestReportsForCurrentIncidents()
+	rfs, err := latestReportsForCurrentIncidents()
+	if err != nil {
+		// Defaulting to 500
+		return 0, nil, nil, tigertonic.InternalServerError{err}
+	}
 
 	rfc := reportFeatureCollectionForReportFeatures(rfs)
 
