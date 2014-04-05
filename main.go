@@ -110,11 +110,11 @@ func main() {
 func get(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *MyResponse, error) {
 	iNum, _ := GetNumIncidents()
 	rNum, _ := GetNumReports()
-	resp := &MyResponse{iNum, rNum}
+	resp := &CountResponse{iNum, rNum}
 	return http.StatusOK, nil, resp, nil
 }
 
-// Fetch count of incidents
+// Fetch number of incidents in database
 func GetNumIncidents() (int, error) {
 	stmt, err := db.Prepare(`SELECT COUNT(*) FROM incidents`)
 	if err != nil {
@@ -130,7 +130,7 @@ func GetNumIncidents() (int, error) {
 	return count, nil
 }
 
-// Fetch count of reports
+// Fetch number of reports in database
 func GetNumReports() (int, error) {
 	stmt, err := db.Prepare(`SELECT COUNT(*) FROM reports`)
 	if err != nil {
