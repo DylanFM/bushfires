@@ -41,8 +41,8 @@ func init() {
 	mux = tigertonic.NewTrieServeMux()
 	mux.Handle(
 		"GET",
-		"/incidents",
-		tigertonic.Timed(tigertonic.Marshaled(get), "incidents", nil),
+		"/reports/{uuid}",
+		tigertonic.Timed(tigertonic.Marshaled(get), "Get-report-UUID", nil),
 	)
 
 	// Example use of namespaces.
@@ -106,42 +106,14 @@ func main() {
 
 }
 
-// GET /incidents
-func get(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *MyResponse, error) {
-	iNum, _ := GetNumIncidents()
-	rNum, _ := GetNumReports()
-	resp := &CountResponse{iNum, rNum}
-	return http.StatusOK, nil, resp, nil
-}
+// GET /reports/:uuid
+// Returns a GeoJSON Feature for the given report UUID.
+func get(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *ReportFeatureCollection, error) {
 
-// Fetch number of incidents in database
-func GetNumIncidents() (int, error) {
-	stmt, err := db.Prepare(`SELECT COUNT(*) FROM incidents`)
-	if err != nil {
-		return 0, err
-	}
-	defer stmt.Close()
+	// TODO handle errors and return 404 (or appropriate)
+	rf, _ := reportFeatureForUUID(u.Query().Get("uuid"))
 
-	var count int
-	err = stmt.QueryRow().Scan(&count)
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
-}
+	rfc := reportFeatureCollectionForReportFeatures([]ReportFeature{rf})
 
-// Fetch number of reports in database
-func GetNumReports() (int, error) {
-	stmt, err := db.Prepare(`SELECT COUNT(*) FROM reports`)
-	if err != nil {
-		return 0, err
-	}
-	defer stmt.Close()
-
-	var count int
-	err = stmt.QueryRow().Scan(&count)
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
+	return http.StatusOK, nil, &rfc, nil
 }
