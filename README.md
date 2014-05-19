@@ -24,6 +24,5 @@ There are additional config options available for this command, which can be vie
 
 ## API Documentation
 
-**WIP** -Visit the API docs.-
-
+Visit [the API docs](http://api.bushfir.es).
 
