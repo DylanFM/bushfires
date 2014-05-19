@@ -128,19 +128,3 @@ Retrieve an incident by its *id*.
               ]
             }
 
-
-# GET /incidents/{id}/reports
-Retrieve all of an incident's reports, identifying the incident by its *id*.
-
-+ Parameters
-
-    + id (required, string, `df34a81e-4fe5-4c09-8403-466526ea503c`) ... Id of an incident.
-
-+ Response 200 (application/json)
-
-  JSON conforming to the GeoJSON spec. Response is a feature collection containing 1 or more features. Each feature represents a report for the requested incident. The features are ordered by *updated* date ascending.
-
-  + Body
-
-            { ... }
-
