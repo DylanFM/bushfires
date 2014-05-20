@@ -165,42 +165,37 @@ a.list-group-item.heading {
 </span>}
 </code></pre></li></ul></section><h4 id="-">Resources&nbsp;<a href="#-"><i class="fa fa-link"></i></a></h4><section id="--get" class="panel panel-info"><div class="panel-heading"><div style="float:left"><a href="#--get" class="btn btn-xs btn-info">GET</a></div><div style="overflow:hidden"><code>/incidents/{id}</code></div></div><div class="panel-body"><p>Retrieve an incident by its <em>id</em>.</p>
 </div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>id</dt><dd><code>string</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>df34a81e-4fe5-4c09-8403-466526ea503c</span></span><p>Id of an incident.</p>
-</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#286d852f7c72df70c772bea887f2c408" class="pull-right">Toggle</a></li><li id="286d852f7c72df70c772bea887f2c408" class="list-group-item panel-collapse collapse"><div class="description"><p>JSON conforming to the GeoJSON spec. Response is a feature collection containing 1 feature. The feature represents the requested incident. Properties included in the feature object are taken from the incident’s most recent report.</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#e7ab48d6ad147f455fe556673fc6f016" class="pull-right">Toggle</a></li><li id="e7ab48d6ad147f455fe556673fc6f016" class="list-group-item panel-collapse collapse"><div class="description"><p>JSON conforming to the GeoJSON spec. Response is a feature representing the requested incident. Properties included in the feature object are taken from the incident’s most recent report.</p>
 </div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
-  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"FeatureCollection"</span></span>,
-  "<span class="hljs-attribute">features</span>": <span class="hljs-value">[
-    {
-      "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"Feature"</span></span>,
-      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"df34a81e-4fe5-4c09-8403-466526ea503c"</span></span>,
-      "<span class="hljs-attribute">geometry</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"Point"</span></span>,
-        "<span class="hljs-attribute">coordinates</span>": <span class="hljs-value">[
-          <span class="hljs-string">"152.4392"</span>,
-          <span class="hljs-string">"-32.3934"</span>
-        ]
-      </span>}</span>,
-      "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
-        "<span class="hljs-attribute">reportUuid</span>": <span class="hljs-value"><span class="hljs-string">"1b44ceb8-e3b9-4a5d-8965-af6992efe892"</span></span>,
-        "<span class="hljs-attribute">guid</span>": <span class="hljs-value"><span class="hljs-string">"tag:www.rfs.nsw.gov.au,2014-03-05:155600"</span></span>,
-        "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-string">"The Lakes Way, Bungwahl"</span></span>,
-        "<span class="hljs-attribute">link</span>": <span class="hljs-value"><span class="hljs-string">"http:\/\/www.rfs.nsw.gov.au\/dsp_content.cfm?cat_id=683"</span></span>,
-        "<span class="hljs-attribute">category</span>": <span class="hljs-value"><span class="hljs-string">"Advice"</span></span>,
-        "<span class="hljs-attribute">pubdate</span>": <span class="hljs-value"><span class="hljs-string">"0001-01-01T10:04:52+10:04"</span></span>,
-        "<span class="hljs-attribute">updated</span>": <span class="hljs-value"><span class="hljs-string">"2014-03-05T20:04:00+11:00"</span></span>,
-        "<span class="hljs-attribute">alertLevel</span>": <span class="hljs-value"><span class="hljs-string">"Advice"</span></span>,
-        "<span class="hljs-attribute">location</span>": <span class="hljs-value"><span class="hljs-string">"1826 The Lakes Way, Bungwahl, NSW 2423"</span></span>,
-        "<span class="hljs-attribute">councilArea</span>": <span class="hljs-value"><span class="hljs-string">"Great Lakes"</span></span>,
-        "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-string">"under control"</span></span>,
-        "<span class="hljs-attribute">fireType</span>": <span class="hljs-value"><span class="hljs-string">"Grass fire"</span></span>,
-        "<span class="hljs-attribute">fire</span>": <span class="hljs-value"><span class="hljs-literal">true</span></span>,
-        "<span class="hljs-attribute">size</span>": <span class="hljs-value"><span class="hljs-string">"4 ha"</span></span>,
-        "<span class="hljs-attribute">responsibleAgency</span>": <span class="hljs-value"><span class="hljs-string">"Rural Fire Service"</span></span>,
-        "<span class="hljs-attribute">extra</span>": <span class="hljs-value"><span class="hljs-string">""</span>
-      </span>}
-    </span>}
-  ]
+  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"Feature"</span></span>,
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"df34a81e-4fe5-4c09-8403-466526ea503c"</span></span>,
+  "<span class="hljs-attribute">geometry</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"Point"</span></span>,
+    "<span class="hljs-attribute">coordinates</span>": <span class="hljs-value">[
+      <span class="hljs-string">"152.4392"</span>,
+      <span class="hljs-string">"-32.3934"</span>
+    ]
+  </span>}</span>,
+  "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">reportUuid</span>": <span class="hljs-value"><span class="hljs-string">"1b44ceb8-e3b9-4a5d-8965-af6992efe892"</span></span>,
+    "<span class="hljs-attribute">guid</span>": <span class="hljs-value"><span class="hljs-string">"tag:www.rfs.nsw.gov.au,2014-03-05:155600"</span></span>,
+    "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-string">"The Lakes Way, Bungwahl"</span></span>,
+    "<span class="hljs-attribute">link</span>": <span class="hljs-value"><span class="hljs-string">"http:\/\/www.rfs.nsw.gov.au\/dsp_content.cfm?cat_id=683"</span></span>,
+    "<span class="hljs-attribute">category</span>": <span class="hljs-value"><span class="hljs-string">"Advice"</span></span>,
+    "<span class="hljs-attribute">pubdate</span>": <span class="hljs-value"><span class="hljs-string">"0001-01-01T10:04:52+10:04"</span></span>,
+    "<span class="hljs-attribute">updated</span>": <span class="hljs-value"><span class="hljs-string">"2014-03-05T20:04:00+11:00"</span></span>,
+    "<span class="hljs-attribute">alertLevel</span>": <span class="hljs-value"><span class="hljs-string">"Advice"</span></span>,
+    "<span class="hljs-attribute">location</span>": <span class="hljs-value"><span class="hljs-string">"1826 The Lakes Way, Bungwahl, NSW 2423"</span></span>,
+    "<span class="hljs-attribute">councilArea</span>": <span class="hljs-value"><span class="hljs-string">"Great Lakes"</span></span>,
+    "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-string">"under control"</span></span>,
+    "<span class="hljs-attribute">fireType</span>": <span class="hljs-value"><span class="hljs-string">"Grass fire"</span></span>,
+    "<span class="hljs-attribute">fire</span>": <span class="hljs-value"><span class="hljs-literal">true</span></span>,
+    "<span class="hljs-attribute">size</span>": <span class="hljs-value"><span class="hljs-string">"4 ha"</span></span>,
+    "<span class="hljs-attribute">responsibleAgency</span>": <span class="hljs-value"><span class="hljs-string">"Rural Fire Service"</span></span>,
+    "<span class="hljs-attribute">extra</span>": <span class="hljs-value"><span class="hljs-string">""</span>
+  </span>}
 </span>}
-</code></pre></li></ul></section></div></div></div></div></div></div><p style="text-align: center;" class="text-muted">Generated by&nbsp;<a href="https://github.com/danielgtaylor/aglio" class="aglio">aglio</a>&nbsp;on 19 May 2014</p><div id="localFile" style="display: none; position: absolute; top: 0; left: 0; width: 100%; color: white; background: red; font-size: 150%; text-align: center; padding: 1em;">This page may not display correctly when opened as a local file. Instead, view it from a web server.
+</code></pre></li></ul></section></div></div></div></div></div></div><p style="text-align: center;" class="text-muted">Generated by&nbsp;<a href="https://github.com/danielgtaylor/aglio" class="aglio">aglio</a>&nbsp;on 20 May 2014</p><div id="localFile" style="display: none; position: absolute; top: 0; left: 0; width: 100%; color: white; background: red; font-size: 150%; text-align: center; padding: 1em;">This page may not display correctly when opened as a local file. Instead, view it from a web server.
 
 </div>
 <script>
