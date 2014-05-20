@@ -128,15 +128,15 @@ func getIncident(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *I
 
 // GET /incidents
 // Returns a GeoJSON FeatureCollection of incidents marked as current
-func getIncidents(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *ReportFeatureCollection, error) {
+func getIncidents(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *IncidentFeatureCollection, error) {
 
-	rfs, err := latestReportsForCurrentIncidents()
+	ifs, err := currentIncidentsWithLatestReport()
 	if err != nil {
 		// Defaulting to 500
 		return 0, nil, nil, tigertonic.InternalServerError{err}
 	}
 
-	rfc := reportFeatureCollectionForReportFeatures(rfs)
+	ifc := incidentFeatureCollectionForIncidentFeatures(ifs)
 
-	return http.StatusOK, nil, &rfc, nil
+	return http.StatusOK, nil, &ifc, nil
 }
