@@ -41,8 +41,8 @@ func init() {
 	mux = tigertonic.NewTrieServeMux()
 	mux.Handle(
 		"GET",
-		"/reports/{uuid}",
-		tigertonic.Timed(tigertonic.Marshaled(getReport), "Get-report-UUID", nil),
+		"/incidents/{uuid}",
+		tigertonic.Timed(tigertonic.Marshaled(getIncident), "Get-incident-UUID", nil),
 	)
 
 	mux.Handle(
@@ -112,20 +112,18 @@ func main() {
 
 }
 
-// GET /reports/:uuid
-// Returns a GeoJSON FeatureCollection for the given report UUID.
-func getReport(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *ReportFeatureCollection, error) {
+// GET /incidents/:uuid
+// Returns a GeoJSON FeatureCollection for the given incident UUID.
+func getIncident(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *IncidentFeature, error) {
 
-	rf, err := reportFeatureForUUID(u.Query().Get("uuid"))
+	fea, err := incidentFeatureForUUID(u.Query().Get("uuid"))
 	if err != nil {
 		// Defaulting to 500
 		// TODO handle 404
 		return 0, nil, nil, tigertonic.InternalServerError{err}
 	}
 
-	rfc := reportFeatureCollectionForReportFeatures([]ReportFeature{rf})
-
-	return http.StatusOK, nil, &rfc, nil
+	return http.StatusOK, nil, &fea, nil
 }
 
 // GET /incidents
