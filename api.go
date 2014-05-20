@@ -54,7 +54,7 @@ func incidentFeatureCollectionForIncidentFeatures(fea []IncidentFeature) Inciden
 	return IncidentFeatureCollection{"FeatureCollection", fea}
 }
 
-// A GeoJSON FeatureCollection representing a collection of ReportFeatures
+// IncidentFeatureCollection A GeoJSON FeatureCollection representing a collection of ReportFeatures
 type IncidentFeatureCollection struct {
 	Type     string            `json:"type"`
 	Features []IncidentFeature `json:"features"`
