@@ -11,6 +11,8 @@ func currentIncidentsWithLatestReport() (incidents []IncidentFeature, err error)
                               guid, title, link, category, timezone('UTC', pubdate),
                               alert_level, location, council_area, status, fire_type,
                               fire, size, responsible_agency, extra,
+                              timezone('UTC', lower(i.current_from)) as first_seen,
+                              timezone('UTC', upper(i.current_from)) as last_seen,
                               ST_Y(r.geometry) as lat, ST_X(r.geometry) as lng
                             FROM incidents i
                             JOIN reports r ON i.uuid = r.incident_uuid
@@ -32,7 +34,7 @@ func currentIncidentsWithLatestReport() (incidents []IncidentFeature, err error)
 		var ip IncidentProperties
 		var fea IncidentFeature
 
-		err = rows.Scan(&ip.ReportUUID, &fea.UUID, &ip.Guid, &ip.Title, &ip.Link, &ip.Category, &ip.Pubdate, &ip.AlertLevel, &ip.Location, &ip.CouncilArea, &ip.Status, &ip.FireType, &ip.Fire, &ip.Size, &ip.ResponsibleAgency, &ip.Extra, &lat, &lng)
+		err = rows.Scan(&ip.ReportUUID, &fea.UUID, &ip.Guid, &ip.Title, &ip.Link, &ip.Category, &ip.Pubdate, &ip.AlertLevel, &ip.Location, &ip.CouncilArea, &ip.Status, &ip.FireType, &ip.Fire, &ip.Size, &ip.ResponsibleAgency, &ip.Extra, &ip.FirstSeen, &ip.LastSeen, &lat, &lng)
 		if err != nil {
 			return
 		}
@@ -69,6 +71,8 @@ func incidentFeatureForUUID(uuid string) (IncidentFeature, error) {
                               guid, title, link, category, timezone('UTC', pubdate),
                               alert_level, location, council_area, status, fire_type,
                               fire, size, responsible_agency, extra,
+                              timezone('UTC', lower(i.current_from)) as first_seen,
+                              timezone('UTC', upper(i.current_from)) as last_seen,
                               ST_Y(r.geometry) as lat, ST_X(r.geometry) as lng
                             FROM incidents i
                             JOIN reports r ON i.uuid = r.incident_uuid
@@ -84,7 +88,7 @@ func incidentFeatureForUUID(uuid string) (IncidentFeature, error) {
 	var lng string
 	var ip IncidentProperties
 
-	err = stmt.QueryRow(uuid).Scan(&ip.ReportUUID, &ip.Guid, &ip.Title, &ip.Link, &ip.Category, &ip.Pubdate, &ip.AlertLevel, &ip.Location, &ip.CouncilArea, &ip.Status, &ip.FireType, &ip.Fire, &ip.Size, &ip.ResponsibleAgency, &ip.Extra, &lat, &lng)
+	err = stmt.QueryRow(uuid).Scan(&ip.ReportUUID, &ip.Guid, &ip.Title, &ip.Link, &ip.Category, &ip.Pubdate, &ip.AlertLevel, &ip.Location, &ip.CouncilArea, &ip.Status, &ip.FireType, &ip.Fire, &ip.Size, &ip.ResponsibleAgency, &ip.Extra, &ip.FirstSeen, &ip.LastSeen, &lat, &lng)
 	if err != nil {
 		return fea, err
 	}
@@ -125,6 +129,8 @@ type IncidentProperties struct {
 	Link              string    `json:"link"`
 	Category          string    `json:"category"`
 	Pubdate           time.Time `json:"pubdate"`
+	FirstSeen         time.Time `json:"firstSeen"`
+	LastSeen          time.Time `json:"lastSeen"`
 	AlertLevel        string    `json:"alertLevel"`
 	Location          string    `json:"location"`
 	CouncilArea       string    `json:"councilArea"`
