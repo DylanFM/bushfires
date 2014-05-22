@@ -8,8 +8,8 @@ import (
 func currentIncidentsWithLatestReport() (incidents []IncidentFeature, err error) {
 	// Select the latest report for all current incidents
 	stmt, err := db.Prepare(`SELECT DISTINCT ON (i.uuid) r.uuid, incident_uuid,
-                              guid, title, link, category, pubdate,
-                              updated, alert_level, location, council_area, status, fire_type,
+                              guid, title, link, category, timezone('UTC', pubdate),
+                              timezone('UTC', updated), alert_level, location, council_area, status, fire_type,
                               fire, size, responsible_agency, extra,
                               ST_Y(r.geometry) as lat, ST_X(r.geometry) as lng
                             FROM incidents i
@@ -66,8 +66,8 @@ func incidentFeatureForUUID(uuid string) (IncidentFeature, error) {
 
 	// Select the latest report for the requested incident
 	stmt, err := db.Prepare(`SELECT DISTINCT ON (i.uuid) r.uuid,
-                              guid, title, link, category, pubdate,
-                              updated, alert_level, location, council_area, status, fire_type,
+                              guid, title, link, category, timezone('UTC', pubdate),
+                              timezone('UTC', updated), alert_level, location, council_area, status, fire_type,
                               fire, size, responsible_agency, extra,
                               ST_Y(r.geometry) as lat, ST_X(r.geometry) as lng
                             FROM incidents i
