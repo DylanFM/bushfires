@@ -10,7 +10,7 @@ The aim of this project is to provide more data than just the current incidents.
 
 ## Usage
 
-This API is built using the [Go](http://golang.org) library [Tigertonic](http://github.com/rcrowley/go-tigertonic). It works with data stored in a Postres database. Refer to [the importer's README](https://github.com/DylanFM/incident-worker/blob/master/README.md) for information on setting up the database.
+This API is built using the [Go](http://golang.org) library [Tigertonic](http://github.com/rcrowley/go-tigertonic). It works with data stored in a PostgreSQL database. Refer to [the importer's README](https://github.com/DylanFM/incident-worker/blob/master/README.md) for information on setting up the database.
 
 Once your database is set up, set your DATABASE_URL environment variable, e.g. `postgres://user:pass@localhost/database_name?sslmode=disable`.
 
