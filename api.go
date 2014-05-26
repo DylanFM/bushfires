@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"time"
 )
 
@@ -13,7 +14,7 @@ func currentIncidentsWithLatestReport() (incidents []IncidentFeature, err error)
                               fire, size, responsible_agency, extra,
                               timezone('UTC', lower(i.current_from)) as first_seen,
                               timezone('UTC', upper(i.current_from)) as last_seen,
-                              ST_Y(r.point::geometry) as lat, ST_X(r.point::geometry) as lng
+                              ST_AsGeoJSON(geometry)
                             FROM incidents i
                             JOIN reports r ON i.uuid = r.incident_uuid
                             WHERE i.current = true
@@ -29,12 +30,11 @@ func currentIncidentsWithLatestReport() (incidents []IncidentFeature, err error)
 	}
 
 	for rows.Next() {
-		var lat string
-		var lng string
 		var ip IncidentProperties
 		var fea IncidentFeature
+		var geom string
 
-		err = rows.Scan(&ip.ReportUUID, &fea.UUID, &ip.Guid, &ip.Title, &ip.Link, &ip.Category, &ip.Pubdate, &ip.AlertLevel, &ip.Location, &ip.CouncilArea, &ip.Status, &ip.FireType, &ip.Fire, &ip.Size, &ip.ResponsibleAgency, &ip.Extra, &ip.FirstSeen, &ip.LastSeen, &lat, &lng)
+		err = rows.Scan(&ip.ReportUUID, &fea.UUID, &ip.Guid, &ip.Title, &ip.Link, &ip.Category, &ip.Pubdate, &ip.AlertLevel, &ip.Location, &ip.CouncilArea, &ip.Status, &ip.FireType, &ip.Fire, &ip.Size, &ip.ResponsibleAgency, &ip.Extra, &ip.FirstSeen, &ip.LastSeen, &geom)
 		if err != nil {
 			return
 		}
@@ -43,7 +43,7 @@ func currentIncidentsWithLatestReport() (incidents []IncidentFeature, err error)
 		// and the IncidentFeature needs to be adjusted based on ip content
 		fea.Type = "Feature"
 		fea.Properties = ip
-		fea.Geometry = pointFromCoordinates(lng, lat)
+		fea.Geometry = json.RawMessage([]byte(geom))
 
 		incidents = append(incidents, fea)
 	}
@@ -73,7 +73,7 @@ func incidentFeatureForUUID(uuid string) (IncidentFeature, error) {
                               fire, size, responsible_agency, extra,
                               timezone('UTC', lower(i.current_from)) as first_seen,
                               timezone('UTC', upper(i.current_from)) as last_seen,
-                              ST_Y(r.point::geometry) as lat, ST_X(r.point::geometry) as lng
+                              ST_AsGeoJSON(geometry)
                             FROM incidents i
                             JOIN reports r ON i.uuid = r.incident_uuid
                             WHERE i.current = true
@@ -84,11 +84,10 @@ func incidentFeatureForUUID(uuid string) (IncidentFeature, error) {
 	}
 	defer stmt.Close()
 
-	var lat string
-	var lng string
 	var ip IncidentProperties
+	var geom string
 
-	err = stmt.QueryRow(uuid).Scan(&ip.ReportUUID, &ip.Guid, &ip.Title, &ip.Link, &ip.Category, &ip.Pubdate, &ip.AlertLevel, &ip.Location, &ip.CouncilArea, &ip.Status, &ip.FireType, &ip.Fire, &ip.Size, &ip.ResponsibleAgency, &ip.Extra, &ip.FirstSeen, &ip.LastSeen, &lat, &lng)
+	err = stmt.QueryRow(uuid).Scan(&ip.ReportUUID, &ip.Guid, &ip.Title, &ip.Link, &ip.Category, &ip.Pubdate, &ip.AlertLevel, &ip.Location, &ip.CouncilArea, &ip.Status, &ip.FireType, &ip.Fire, &ip.Size, &ip.ResponsibleAgency, &ip.Extra, &ip.FirstSeen, &ip.LastSeen, &geom)
 	if err != nil {
 		return fea, err
 	}
@@ -98,26 +97,16 @@ func incidentFeatureForUUID(uuid string) (IncidentFeature, error) {
 	fea.Type = "Feature"
 	fea.Properties = ip
 	fea.UUID = uuid
-	fea.Geometry = pointFromCoordinates(lng, lat)
+	fea.Geometry = json.RawMessage([]byte(geom))
 
 	return fea, nil
-}
-
-// Takes a lat and lng and returns a GeoJSON Point with those coordinates
-func pointFromCoordinates(lat string, lng string) (p Point) {
-	p = Point{}
-
-	p.Type = "Point"
-	p.Coordinates = []string{lat, lng}
-
-	return
 }
 
 // IncidentFeature is a GeoJSON feature for an individual report
 type IncidentFeature struct {
 	Type       string             `json:"type"`
 	UUID       string             `json:"id"`
-	Geometry   Point              `json:"geometry"`
+	Geometry   json.RawMessage    `json:"geometry"`
 	Properties IncidentProperties `json:"properties"`
 }
 
@@ -140,11 +129,4 @@ type IncidentProperties struct {
 	Size              string    `json:"size"`
 	ResponsibleAgency string    `json:"responsibleAgency"`
 	Extra             string    `json:"extra"`
-	//Polygons          []string
-}
-
-// Point is a lng, lat coordinate pair used for the GeoJSON geometry type Point.
-type Point struct {
-	Type        string   `json:"type"`
-	Coordinates []string `json:"coordinates"`
 }
