@@ -13,7 +13,7 @@ func currentIncidentsWithLatestReport() (incidents []IncidentFeature, err error)
                               fire, size, responsible_agency, extra,
                               timezone('UTC', lower(i.current_from)) as first_seen,
                               timezone('UTC', upper(i.current_from)) as last_seen,
-                              ST_Y(r.geometry) as lat, ST_X(r.geometry) as lng
+                              ST_Y(r.point::geometry) as lat, ST_X(r.point::geometry) as lng
                             FROM incidents i
                             JOIN reports r ON i.uuid = r.incident_uuid
                             WHERE i.current = true
@@ -73,7 +73,7 @@ func incidentFeatureForUUID(uuid string) (IncidentFeature, error) {
                               fire, size, responsible_agency, extra,
                               timezone('UTC', lower(i.current_from)) as first_seen,
                               timezone('UTC', upper(i.current_from)) as last_seen,
-                              ST_Y(r.geometry) as lat, ST_X(r.geometry) as lng
+                              ST_Y(r.point::geometry) as lat, ST_X(r.point::geometry) as lng
                             FROM incidents i
                             JOIN reports r ON i.uuid = r.incident_uuid
                             WHERE i.current = true
