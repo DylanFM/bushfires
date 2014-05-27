@@ -1,0 +1,18 @@
+{
+	"ImportPath": "github.com/dylanfm/bushfires",
+	"GoVersion": "go1.2",
+	"Deps": [
+		{
+			"ImportPath": "github.com/lib/pq",
+			"Rev": "78760269eebe5e70b28bb94bff676d7b28df275d"
+		},
+		{
+			"ImportPath": "github.com/rcrowley/go-metrics",
+			"Rev": "d1774362a14f30b8eb31af8867bfb15142263644"
+		},
+		{
+			"ImportPath": "github.com/rcrowley/go-tigertonic",
+			"Rev": "86e8a7d9c595d926bfd999d7a4a43af79f9671ef"
+		}
+	]
+}
