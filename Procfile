@@ -1,1 +1,1 @@
-web: bushfires -listen=$PORT
+web: bushfires -listen=:$PORT
