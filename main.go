@@ -81,13 +81,15 @@ func main() {
 	}
 	defer db.Close()
 
+	// Set the allowed CORS origins
+	cors := tigertonic.NewCORSBuilder().AddAllowedOrigins("*")
+
 	server := tigertonic.NewServer(
 		*listen,
 
 		// Example use of go-metrics to track HTTP status codes.
 		tigertonic.CountedByStatus(
-			// Example use of request logging
-			tigertonic.Logged(nsMux, nil),
+			tigertonic.Logged(cors.Build(nsMux), nil),
 			"http",
 			nil,
 		),
