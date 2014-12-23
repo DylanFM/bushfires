@@ -391,3 +391,23 @@ Retrieve an incident by its *id*.
                 }
             }
 
+# GET /incidents/{id}/reports
+Retrieve all reports for a specified incident.
+
++ Parameters
+
+    + id (required, string, `df34a81e-4fe5-4c09-8403-466526ea503c`) ... Id of an incident.
+
++ Response 200 (application/json)
+
+  Reports are returned as a GeoJSON `FeatureCollection` whose `features` are ordered by `pubdate` in ascending order. Each item within the `FeatureCollection` is a `Feature` representing the report. A report is basically a snapshot of the incident at a given time. A report should never be identical to the one preceeding or following it.
+
+  + Body
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature"
+                    }
+                ]
+            }
