@@ -39,6 +39,13 @@ func init() {
 	// Register endpoints defined in top-level functions below with example
 	// uses of Timed go-metrics wrapper.
 	mux = tigertonic.NewTrieServeMux()
+
+	mux.Handle(
+		"GET",
+		"/incidents",
+		tigertonic.Timed(tigertonic.Marshaled(getIncidents), "Get-incidents", nil),
+	)
+
 	mux.Handle(
 		"GET",
 		"/incidents/{uuid}",
@@ -47,8 +54,8 @@ func init() {
 
 	mux.Handle(
 		"GET",
-		"/incidents",
-		tigertonic.Timed(tigertonic.Marshaled(getIncidents), "Get-incidents", nil),
+		"/incidents/{uuid}/reports",
+		tigertonic.Timed(tigertonic.Marshaled(getIncidentReports), "Get-incident-reports", nil),
 	)
 
 	// Example use of namespaces.
@@ -141,4 +148,20 @@ func getIncidents(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *
 	ifc := incidentFeatureCollectionForIncidentFeatures(ifs)
 
 	return http.StatusOK, nil, &ifc, nil
+}
+
+// GET /incidents/:uuid/reports
+// Returns a GeoJSON FeatureCollection of incidents marked as current
+func getIncidentReports(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *ReportFeatureCollection, error) {
+
+	rfs, err := reportsForIncident(u.Query().Get("uuid"))
+	if err != nil {
+		// Defaulting to 500
+		// TODO handle 404
+		return 0, nil, nil, tigertonic.InternalServerError{err}
+	}
+
+	rfc := reportFeatureCollectionForReportFeatures(rfs)
+
+	return http.StatusOK, nil, &rfc, nil
 }
