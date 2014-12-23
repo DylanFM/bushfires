@@ -56,8 +56,8 @@ h4 {
   overflow: hidden;
 }
 .panel-heading code {
-  color: #fff;
-  background-color: transparent;
+  margin-left: 3px;
+  background-color: rgba(255,255,255,0.7);
   white-space: pre-wrap;
   white-space: -moz-pre-wrap;
   white-space: -pre-wrap;
@@ -68,13 +68,46 @@ h4 {
   margin-top: 10px;
   margin-bottom: 10px;
 }
+a.list-group-item:hover {
+  background-color: #f8f8f8;
+  border-left: 2px solid #555;
+  padding-left: 15px;
+}
+.indent {
+  display: block;
+  text-indent: 16px;
+}
+.list-group-item {
+  padding-left: 16px;
+}
+.list-group-item .toggle .open {
+  display: block;
+}
+.list-group-item .toggle .closed {
+  display: none;
+}
+.list-group-item.collapsed .toggle .open {
+  display: none;
+}
+.list-group-item.collapsed .toggle .closed {
+  display: block;
+}
+a.list-group-item:hover {
+  background-color: #f5f5f5;
+  border-left-color: #555;
+}
 a.list-group-item {
+  font-size: 13px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
 }
 a.list-group-item.heading {
+  font-size: 15px;
   background-color: #ecf0f1;
+}
+a.list-group-item.heading:hover {
+  background-color: #f5f5f5;
 }
 .list-group-item.collapse {
   display: none;
@@ -82,9 +115,22 @@ a.list-group-item.heading {
 .list-group-item.collapse.in {
   display: block;
 }
+.list-group-item a span.closed {
+  display: none;
+}
+.list-group-item a span.open {
+  display: block;
+}
+.list-group-item a.collapsed span.closed {
+  display: block;
+}
+.list-group-item a.collapsed span.open {
+  display: none;
+}
 #nav {
+  width: inherit;
   margin-top: 38px;
-  min-width: 255px;
+  max-width: 255px;
   top: 0;
   bottom: 0;
   padding-right: 12px;
@@ -93,13 +139,13 @@ a.list-group-item.heading {
 }
 @media (max-width: 1199px) {
   #nav {
-    min-width: 212px;
+    max-width: 212px;
   }
 }
-</style></head><body><a href="#top" class="text-muted back-to-top"><i class="fa fa-toggle-up"></i>&nbsp;Back to top</a><div class="container"><div class="row"><div class="col-md-3"><nav id="nav" class="hidden-sm hidden-xs affix nav"><div class="list-group"><a href="#" class="list-group-item heading">Resource Group</a><a href="#-" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;GET /incidents</a><a href="#-" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;GET /incidents/{id}</a></div><p style="text-align: center"><a href="http://api.bushfir.es/">http://api.bushfir.es/</a></p></nav></div><div class="col-md-9"><div><header><div class="page-header"><h1 id="top">Fire incidents API</h1></div></header><div class="description"><p>An API to current and previous <a href="http://www.rfs.nsw.gov.au">RFS</a> major incidents.</p>
+</style></head><body><a href="#top" class="text-muted back-to-top"><i class="fa fa-toggle-up"></i>&nbsp;Back to top</a><div class="container"><div class="row"><div class="col-md-3"><nav id="nav" class="hidden-sm hidden-xs affix nav"><div class="list-group"><a data-toggle="" data-target="#-menu" href="#" class="list-group-item heading collapsed">Resource Group</a><div id="-menu"><a href="#-" style="border-top-left-radius: 0; border-top-right-radius: 0" class="list-group-item"><span class="badge alert-info"><i class="fa fa-arrow-down"></i></span>GET /incidents</a><a href="#-" style="border-top-left-radius: 0; border-top-right-radius: 0" class="list-group-item"><span class="badge alert-info"><i class="fa fa-arrow-down"></i></span>GET /incidents/{id}</a><a href="#-" style="border-top-left-radius: 0; border-top-right-radius: 0" class="list-group-item"><span class="badge alert-info"><i class="fa fa-arrow-down"></i></span>GET /incidents/{id}/reports</a></div></div><p style="text-align: center; word-wrap: break-word;"><a href="http://api.bushfir.es/">http://api.bushfir.es/</a></p></nav></div><div class="col-md-8"><div><header><div class="page-header"><h1 id="top">Fire incidents API</h1></div></header><div class="description"><p>An API to current and previous <a href="http://www.rfs.nsw.gov.au">RFS</a> major incidents.</p>
 </div></div><div><div class="panel panel-default"><div class="panel-heading"><h3 id="">Resource Group&nbsp;<a href="#"><i class="fa fa-link"></i></a></h3></div><div class="panel-body"><h4 id="-">Resources&nbsp;<a href="#-"><i class="fa fa-link"></i></a></h4><section id="--get" class="panel panel-info"><div class="panel-heading"><div style="float:left"><a href="#--get" class="btn btn-xs btn-info">GET</a></div><div style="overflow:hidden"><code>/incidents</code></div></div><div class="panel-body"><p>Retrieve a collection of incidents which may or may not be filtered by parameters included in the request.</p>
 </div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>current</dt><dd><code>boolean</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-info default"><strong>Default:&nbsp;</strong><span>true</span></span>&nbsp;<p>Boolean value indicating whether to only include current incidents or not.</p>
-</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#b0ae8e23ce9a3bef1236523f08141ac8" class="pull-right">Toggle</a></li><li id="b0ae8e23ce9a3bef1236523f08141ac8" class="list-group-item panel-collapse collapse"><div class="description"><p>JSON conforming to the GeoJSON spec. Response is a feature collection containing 0 or more features. Each feature represents an incident. Properties included in the feature object are taken from the incident’s most recent report.</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#b0ae8e23ce9a3bef1236523f08141ac8" class="pull-right collapsed"><span class="closed">Show</span><span class="open">Hide</span></a></li><li id="b0ae8e23ce9a3bef1236523f08141ac8" class="list-group-item panel-collapse collapse"><div class="description"><p>JSON conforming to the GeoJSON spec. Response is a feature collection containing 0 or more features. Each feature represents an incident. Properties included in the feature object are taken from the incident’s most recent report.</p>
 </div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
     "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"FeatureCollection"</span></span>,
     "<span class="hljs-attribute">features</span>": <span class="hljs-value">[
@@ -302,7 +348,7 @@ a.list-group-item.heading {
   </span>}
 </code></pre></li></ul></section><h4 id="-">Resources&nbsp;<a href="#-"><i class="fa fa-link"></i></a></h4><section id="--get" class="panel panel-info"><div class="panel-heading"><div style="float:left"><a href="#--get" class="btn btn-xs btn-info">GET</a></div><div style="overflow:hidden"><code>/incidents/{id}</code></div></div><div class="panel-body"><p>Retrieve an incident by its <em>id</em>.</p>
 </div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>id</dt><dd><code>string</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>df34a81e-4fe5-4c09-8403-466526ea503c</span></span><p>Id of an incident.</p>
-</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#c78a0d4bf9844ea39dc5f07b4e1b9b05" class="pull-right">Toggle</a></li><li id="c78a0d4bf9844ea39dc5f07b4e1b9b05" class="list-group-item panel-collapse collapse"><div class="description"><p>JSON conforming to the GeoJSON spec. Response is a feature representing the requested incident. Properties included in the feature object are taken from the incident’s most recent report.</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#c78a0d4bf9844ea39dc5f07b4e1b9b05" class="pull-right collapsed"><span class="closed">Show</span><span class="open">Hide</span></a></li><li id="c78a0d4bf9844ea39dc5f07b4e1b9b05" class="list-group-item panel-collapse collapse"><div class="description"><p>JSON conforming to the GeoJSON spec. Response is a feature representing the requested incident. Properties included in the feature object are taken from the incident’s most recent report.</p>
 </div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span><br></code></pre><h5>Body</h5><pre><code>{
     "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"Feature"</span></span>,
     "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"176a2772-2589-4fa5-bb21-16af5bcd69fc"</span></span>,
@@ -463,10 +509,175 @@ a.list-group-item.heading {
         "<span class="hljs-attribute">extra</span>": <span class="hljs-value"><span class="hljs-string">""</span>
     </span>}
 </span>}
-</code></pre></li></ul></section></div></div></div></div></div></div><p style="text-align: center;" class="text-muted">Generated by&nbsp;<a href="https://github.com/danielgtaylor/aglio" class="aglio">aglio</a>&nbsp;on 26 May 2014</p><div id="localFile" style="display: none; position: absolute; top: 0; left: 0; width: 100%; color: white; background: red; font-size: 150%; text-align: center; padding: 1em;">This page may not display correctly when opened as a local file. Instead, view it from a web server.
+</code></pre></li></ul></section><h4 id="-">Resources&nbsp;<a href="#-"><i class="fa fa-link"></i></a></h4><section id="--get" class="panel panel-info"><div class="panel-heading"><div style="float:left"><a href="#--get" class="btn btn-xs btn-info">GET</a></div><div style="overflow:hidden"><code>/incidents/{id}/reports</code></div></div><div class="panel-body"><p>Retrieve all reports for a specified incident.</p>
+</div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>id</dt><dd><code>string</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>df34a81e-4fe5-4c09-8403-466526ea503c</span></span><p>Id of an incident.</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#5fb00cc643dae010a95334a71be9fc54" class="pull-right collapsed"><span class="closed">Show</span><span class="open">Hide</span></a></li><li id="5fb00cc643dae010a95334a71be9fc54" class="list-group-item panel-collapse collapse"><div class="description"><p>Reports are returned as a GeoJSON <code>FeatureCollection</code> whose <code>features</code> are ordered by <code>pubdate</code> in ascending order. Each item within the <code>FeatureCollection</code> is a <code>Feature</code> representing the report. A report is basically a snapshot of the incident at a given time. A report should never be identical to the one preceeding or following it.</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span><br></code></pre><h5>Body</h5><pre><code>    {
+        "<span class="hljs-attribute">type</span>":<span class="hljs-value"><span class="hljs-string">"FeatureCollection"</span></span>,
+        "<span class="hljs-attribute">features</span>":<span class="hljs-value">[
+            {
+                "<span class="hljs-attribute">type</span>":<span class="hljs-value"><span class="hljs-string">"Feature"</span></span>,
+                "<span class="hljs-attribute">id</span>":<span class="hljs-value"><span class="hljs-string">"f796f4de-24d3-422f-a197-01c4dffd3276"</span></span>,
+                "<span class="hljs-attribute">geometry</span>":<span class="hljs-value">{
+                    "<span class="hljs-attribute">type</span>":<span class="hljs-value"><span class="hljs-string">"GeometryCollection"</span></span>,
+                    "<span class="hljs-attribute">geometries</span>":<span class="hljs-value">[
+                        {
+                            "<span class="hljs-attribute">type</span>":<span class="hljs-value"><span class="hljs-string">"Point"</span></span>,
+                            "<span class="hljs-attribute">coordinates</span>":<span class="hljs-value">[
+                                <span class="hljs-number">151.6282</span>,
+                                -<span class="hljs-number">31.9785</span>
+                            ]
+                        </span>}
+                    ]
+                </span>}</span>,
+                "<span class="hljs-attribute">properties</span>":<span class="hljs-value">{
+                    "<span class="hljs-attribute">guid</span>":<span class="hljs-value"><span class="hljs-string">"tag:www.rfs.nsw.gov.au,2014-11-25:179696"</span></span>,
+                    "<span class="hljs-attribute">title</span>":<span class="hljs-value"><span class="hljs-string">"Moppy Rd, Moppy"</span></span>,
+                    "<span class="hljs-attribute">link</span>":<span class="hljs-value"><span class="hljs-string">"http://www.rfs.nsw.gov.au/dsp_content.cfm?cat_id=683"</span></span>,
+                    "<span class="hljs-attribute">category</span>":<span class="hljs-value"><span class="hljs-string">"Advice"</span></span>,
+                    "<span class="hljs-attribute">pubdate</span>":<span class="hljs-value"><span class="hljs-string">"2014-11-24T23:04:00Z"</span></span>,
+                    "<span class="hljs-attribute">alertLevel</span>":<span class="hljs-value"><span class="hljs-string">"Advice"</span></span>,
+                    "<span class="hljs-attribute">location</span>":<span class="hljs-value"><span class="hljs-string">"Moppy Rd, Moppy, NSW 2422"</span></span>,
+                    "<span class="hljs-attribute">councilArea</span>":<span class="hljs-value"><span class="hljs-string">"Gloucester"</span></span>,
+                    "<span class="hljs-attribute">status</span>":<span class="hljs-value"><span class="hljs-string">"out of control"</span></span>,
+                    "<span class="hljs-attribute">fireType</span>":<span class="hljs-value"><span class="hljs-string">"Bush Fire"</span></span>,
+                    "<span class="hljs-attribute">fire</span>":<span class="hljs-value"><span class="hljs-literal">true</span></span>,
+                    "<span class="hljs-attribute">size</span>":<span class="hljs-value"><span class="hljs-string">"0 ha"</span></span>,
+                    "<span class="hljs-attribute">responsibleAgency</span>":<span class="hljs-value"><span class="hljs-string">"Rural Fire Service"</span></span>,
+                    "<span class="hljs-attribute">extra</span>":<span class="hljs-value"><span class="hljs-string">""</span>
+                </span>}
+            </span>},
+            {
+                "<span class="hljs-attribute">type</span>":<span class="hljs-value"><span class="hljs-string">"Feature"</span></span>,
+                "<span class="hljs-attribute">id</span>":<span class="hljs-value"><span class="hljs-string">"94ce13db-8d7b-4eb7-a6aa-2b9e3741c60b"</span></span>,
+                "<span class="hljs-attribute">geometry</span>":<span class="hljs-value">{
+                    "<span class="hljs-attribute">type</span>":<span class="hljs-value"><span class="hljs-string">"GeometryCollection"</span></span>,
+                    "<span class="hljs-attribute">geometries</span>":<span class="hljs-value">[
+                        {
+                            "<span class="hljs-attribute">type</span>":<span class="hljs-value"><span class="hljs-string">"Point"</span></span>,
+                            "<span class="hljs-attribute">coordinates</span>":<span class="hljs-value">[
+                                <span class="hljs-number">151.6282</span>,
+                                -<span class="hljs-number">31.9785</span>
+                            ]
+                        </span>}
+                    ]
+                </span>}</span>,
+                "<span class="hljs-attribute">properties</span>":<span class="hljs-value">{
+                    "<span class="hljs-attribute">guid</span>":<span class="hljs-value"><span class="hljs-string">"tag:www.rfs.nsw.gov.au,2014-11-25:179696"</span></span>,
+                    "<span class="hljs-attribute">title</span>":<span class="hljs-value"><span class="hljs-string">"Kerripit Fire"</span></span>,
+                    "<span class="hljs-attribute">link</span>":<span class="hljs-value"><span class="hljs-string">"http://www.rfs.nsw.gov.au/dsp_content.cfm?cat_id=683"</span></span>,
+                    "<span class="hljs-attribute">category</span>":<span class="hljs-value"><span class="hljs-string">"Advice"</span></span>,
+                    "<span class="hljs-attribute">pubdate</span>":<span class="hljs-value"><span class="hljs-string">"2014-11-24T23:04:00Z"</span></span>,
+                    "<span class="hljs-attribute">alertLevel</span>":<span class="hljs-value"><span class="hljs-string">"Advice"</span></span>,
+                    "<span class="hljs-attribute">location</span>":<span class="hljs-value"><span class="hljs-string">"Moppy Rd, Moppy, NSW 2422"</span></span>,
+                    "<span class="hljs-attribute">councilArea</span>":<span class="hljs-value"><span class="hljs-string">"Gloucester"</span></span>,
+                    "<span class="hljs-attribute">status</span>":<span class="hljs-value"><span class="hljs-string">"out of control"</span></span>,
+                    "<span class="hljs-attribute">fireType</span>":<span class="hljs-value"><span class="hljs-string">"Bush Fire"</span></span>,
+                    "<span class="hljs-attribute">fire</span>":<span class="hljs-value"><span class="hljs-literal">true</span></span>,
+                    "<span class="hljs-attribute">size</span>":<span class="hljs-value"><span class="hljs-string">"0 ha"</span></span>,
+                    "<span class="hljs-attribute">responsibleAgency</span>":<span class="hljs-value"><span class="hljs-string">"Rural Fire Service"</span></span>,
+                    "<span class="hljs-attribute">extra</span>":<span class="hljs-value"><span class="hljs-string">""</span>
+                </span>}
+            </span>},
+            {
+                "<span class="hljs-attribute">type</span>":<span class="hljs-value"><span class="hljs-string">"Feature"</span></span>,
+                "<span class="hljs-attribute">id</span>":<span class="hljs-value"><span class="hljs-string">"8a367e50-cf85-44f5-9bdd-7038053e9766"</span></span>,
+                "<span class="hljs-attribute">geometry</span>":<span class="hljs-value">{
+                    "<span class="hljs-attribute">type</span>":<span class="hljs-value"><span class="hljs-string">"GeometryCollection"</span></span>,
+                    "<span class="hljs-attribute">geometries</span>":<span class="hljs-value">[
+                        {
+                            "<span class="hljs-attribute">type</span>":<span class="hljs-value"><span class="hljs-string">"Point"</span></span>,
+                            "<span class="hljs-attribute">coordinates</span>":<span class="hljs-value">[
+                                <span class="hljs-number">151.6653</span>,
+                                -<span class="hljs-number">31.9857</span>
+                            ]
+                        </span>},
+                        {
+                            "<span class="hljs-attribute">type</span>":<span class="hljs-value"><span class="hljs-string">"MultiPolygon"</span></span>,
+                            "<span class="hljs-attribute">coordinates</span>":<span class="hljs-value">[
+                                [
+                                    [
+                                        [
+                                            <span class="hljs-number">151.6471</span>,
+                                            -<span class="hljs-number">32.0003</span>
+                                        ],
+                                        [
+                                            <span class="hljs-number">151.646</span>,
+                                            -<span class="hljs-number">32.0009</span>
+                                        ],
+                                        [
+                                            <span class="hljs-number">151.6445</span>,
+                                            -<span class="hljs-number">32.0008</span>
+                                        ],
+                                        [
+                                            <span class="hljs-number">151.6432</span>,
+                                            -<span class="hljs-number">31.9992</span>
+                                        ],
+                                        [
+                                            <span class="hljs-number">151.6432</span>,
+                                            -<span class="hljs-number">31.9983</span>
+                                        ],
+                                        [
+                                            <span class="hljs-number">151.644</span>,
+                                            -<span class="hljs-number">31.9975</span>
+                                        ],
+                                        [
+                                            <span class="hljs-number">151.6447</span>,
+                                            -<span class="hljs-number">31.9973</span>
+                                        ],
+                                        [
+                                            <span class="hljs-number">151.6457</span>,
+                                            -<span class="hljs-number">31.9972</span>
+                                        ],
+                                        [
+                                            <span class="hljs-number">151.6474</span>,
+                                            -<span class="hljs-number">31.9978</span>
+                                        ],
+                                        [
+                                            <span class="hljs-number">151.6477</span>,
+                                            -<span class="hljs-number">31.9986</span>
+                                        ],
+                                        [
+                                            <span class="hljs-number">151.6471</span>,
+                                            -<span class="hljs-number">32.0003</span>
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        </span>}
+                    ]
+                </span>}</span>,
+                "<span class="hljs-attribute">properties</span>":<span class="hljs-value">{
+                    "<span class="hljs-attribute">guid</span>":<span class="hljs-value"><span class="hljs-string">"tag:www.rfs.nsw.gov.au,2014-11-25:179696"</span></span>,
+                    "<span class="hljs-attribute">title</span>":<span class="hljs-value"><span class="hljs-string">"Kerripit Fire"</span></span>,
+                    "<span class="hljs-attribute">link</span>":<span class="hljs-value"><span class="hljs-string">"http://www.rfs.nsw.gov.au/dsp_content.cfm?cat_id=683"</span></span>,
+                    "<span class="hljs-attribute">category</span>":<span class="hljs-value"><span class="hljs-string">"Advice"</span></span>,
+                    "<span class="hljs-attribute">pubdate</span>":<span class="hljs-value"><span class="hljs-string">"2014-11-24T23:04:00Z"</span></span>,
+                    "<span class="hljs-attribute">alertLevel</span>":<span class="hljs-value"><span class="hljs-string">"Advice"</span></span>,
+                    "<span class="hljs-attribute">location</span>":<span class="hljs-value"><span class="hljs-string">"Moppy Rd, Moppy, NSW 2422"</span></span>,
+                    "<span class="hljs-attribute">councilArea</span>":<span class="hljs-value"><span class="hljs-string">"Gloucester"</span></span>,
+                    "<span class="hljs-attribute">status</span>":<span class="hljs-value"><span class="hljs-string">"out of control"</span></span>,
+                    "<span class="hljs-attribute">fireType</span>":<span class="hljs-value"><span class="hljs-string">"Bush Fire"</span></span>,
+                    "<span class="hljs-attribute">fire</span>":<span class="hljs-value"><span class="hljs-literal">true</span></span>,
+                    "<span class="hljs-attribute">size</span>":<span class="hljs-value"><span class="hljs-string">"0 ha"</span></span>,
+                    "<span class="hljs-attribute">responsibleAgency</span>":<span class="hljs-value"><span class="hljs-string">"Rural Fire Service"</span></span>,
+                    "<span class="hljs-attribute">extra</span>":<span class="hljs-value"><span class="hljs-string">""</span>
+                </span>}
+            </span>}
+        ]
+    </span>}
 
-</div>
-<script>
+</code></pre></li></ul></section></div></div></div></div></div></div><p style="text-align: center;" class="text-muted">Generated by&nbsp;<a href="https://github.com/danielgtaylor/aglio" class="aglio">aglio</a>&nbsp;on 23 Dec 2014</p><div id="localFile" style="display: none; position: absolute; top: 0; left: 0; width: 100%; color: white; background: red; font-size: 150%; text-align: center; padding: 1em;">This page may not display correctly when opened as a local file. Instead, view it from a web server.
+
+</div></body><script src="//code.jquery.com/jquery-1.11.0.min.js"></script><script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script><script>(function() {
+  if (location.protocol === 'file:') {
+    document.getElementById('localFile').style.display = 'block';
+  }
+
+}).call(this);
+</script><script>(function() {
+  $('table').addClass('table');
+}).call(this);
 var _gauges = _gauges || [];
 (function() {
 var t   = document.createElement('script');
@@ -477,15 +688,4 @@ t.src = '//secure.gaug.es/track.js';
 var s = document.getElementsByTagName('script')[0];
 s.parentNode.insertBefore(t, s);
 })();
-</script>
-</body><script src="//code.jquery.com/jquery-1.11.0.min.js"></script><script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script><script>(function() {
-  if (location.protocol === 'file:') {
-    document.getElementById('localFile').style.display = 'block';
-  }
-
-}).call(this);
-</script><script>(function() {
-  $('table').addClass('table');
-
-}).call(this);
 </script></html>
