@@ -15,6 +15,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
 
 var db *sql.DB // Global for database connection
@@ -39,6 +40,12 @@ func init() {
 	// Register endpoints defined in top-level functions below with example
 	// uses of Timed go-metrics wrapper.
 	mux = tigertonic.NewTrieServeMux()
+
+	mux.Handle(
+		"GET",
+		"/incidents",
+		tigertonic.Timed(tigertonic.Marshaled(getIncidents), "Get-incidents", nil),
+	)
 
 	mux.Handle(
 		"GET",
@@ -121,18 +128,30 @@ func main() {
 
 }
 
-// GET /incidents/:uuid
-// Returns a GeoJSON FeatureCollection for the given incident UUID.
-func getIncident(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *IncidentFeature, error) {
+// GET /incidents
+// Returns a GeoJSON FeatureCollection of incidents filtered by specified time range
+func getIncidents(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *IncidentFeatureCollection, error) {
 
-	fea, err := incidentFeatureForUUID(u.Query().Get("uuid"))
+	timeFormat := "2006-01-02T15:04:05Z"
+
+	timeStart, err := time.Parse(timeFormat, u.Query().Get("timeStart"))
 	if err != nil {
-		// Defaulting to 500
-		// TODO handle 404
+		return 0, nil, nil, tigertonic.BadRequest{err}
+	}
+
+	timeEnd, err := time.Parse(timeFormat, u.Query().Get("timeEnd"))
+	if err != nil {
+		return 0, nil, nil, tigertonic.BadRequest{err}
+	}
+
+	ifs, err := incidentsWithinTimeRange(timeStart, timeEnd)
+	if err != nil {
 		return 0, nil, nil, tigertonic.InternalServerError{err}
 	}
 
-	return http.StatusOK, nil, &fea, nil
+	ifc := incidentFeatureCollectionForIncidentFeatures(ifs)
+
+	return http.StatusOK, nil, &ifc, nil
 }
 
 // GET /incidents/current
@@ -148,6 +167,20 @@ func getCurrentIncidents(u *url.URL, h http.Header, _ interface{}) (int, http.He
 	ifc := incidentFeatureCollectionForIncidentFeatures(ifs)
 
 	return http.StatusOK, nil, &ifc, nil
+}
+
+// GET /incidents/:uuid
+// Returns a GeoJSON FeatureCollection for the given incident UUID.
+func getIncident(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *IncidentFeature, error) {
+
+	fea, err := incidentFeatureForUUID(u.Query().Get("uuid"))
+	if err != nil {
+		// Defaulting to 500
+		// TODO handle 404
+		return 0, nil, nil, tigertonic.InternalServerError{err}
+	}
+
+	return http.StatusOK, nil, &fea, nil
 }
 
 // GET /incidents/:uuid/reports

@@ -5,6 +5,53 @@ import (
 	"time"
 )
 
+// Returns a slice of IncidentFeatures. The incidents are those within the specified time range
+func incidentsWithinTimeRange(timeStart time.Time, timeEnd time.Time) (incidents []IncidentFeature, err error) {
+
+	// NOTE this is basically a dup of the following function for fetching current incidents
+	stmt, err := db.Prepare(`SELECT DISTINCT ON (i.uuid) r.uuid, incident_uuid,
+                              guid, title, link, category, timezone('UTC', pubdate),
+                              alert_level, location, council_area, status, fire_type,
+                              fire, size, responsible_agency, extra,
+                              timezone('UTC', lower(i.current_from)) as first_seen,
+                              timezone('UTC', upper(i.current_from)) as last_seen,
+                              ST_AsGeoJSON(geometry)
+                            FROM incidents i
+                            JOIN reports r ON i.uuid = r.incident_uuid
+                            WHERE current_from && tstzrange($1, $2)
+                            ORDER BY i.uuid, r.pubdate DESC`)
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query(timeStart.UTC().Format(time.RFC3339), timeEnd.UTC().Format(time.RFC3339))
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+		var ip IncidentProperties
+		var fea IncidentFeature
+		var geom string
+
+		err = rows.Scan(&ip.ReportUUID, &fea.UUID, &ip.Guid, &ip.Title, &ip.Link, &ip.Category, &ip.Pubdate, &ip.AlertLevel, &ip.Location, &ip.CouncilArea, &ip.Status, &ip.FireType, &ip.Fire, &ip.Size, &ip.ResponsibleAgency, &ip.Extra, &ip.FirstSeen, &ip.LastSeen, &geom)
+		if err != nil {
+			return
+		}
+
+		// Report properties needs to be placed within a IncidentFeature
+		// and the IncidentFeature needs to be adjusted based on ip content
+		fea.Type = "Feature"
+		fea.Properties = ip
+		fea.Geometry = json.RawMessage([]byte(geom))
+
+		incidents = append(incidents, fea)
+	}
+
+	return
+}
+
 // Returns a slice of IncidentFeatures. The slice contains the latest report for all incidents marked as current
 func currentIncidentsWithLatestReport() (incidents []IncidentFeature, err error) {
 	// Select the latest report for all current incidents
