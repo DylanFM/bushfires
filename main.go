@@ -42,8 +42,8 @@ func init() {
 
 	mux.Handle(
 		"GET",
-		"/incidents",
-		tigertonic.Timed(tigertonic.Marshaled(getIncidents), "Get-incidents", nil),
+		"/incidents/current",
+		tigertonic.Timed(tigertonic.Marshaled(getCurrentIncidents), "Get-current-incidents", nil),
 	)
 
 	mux.Handle(
@@ -135,9 +135,9 @@ func getIncident(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *I
 	return http.StatusOK, nil, &fea, nil
 }
 
-// GET /incidents
+// GET /incidents/current
 // Returns a GeoJSON FeatureCollection of incidents marked as current
-func getIncidents(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *IncidentFeatureCollection, error) {
+func getCurrentIncidents(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *IncidentFeatureCollection, error) {
 
 	ifs, err := currentIncidentsWithLatestReport()
 	if err != nil {
