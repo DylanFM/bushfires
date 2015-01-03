@@ -557,3 +557,42 @@ Retrieve all reports for a specified incident.
                     }
                 ]
             }
+
+# GET /stats
+Retrieve a minimal set of data for use in the display of charts etc.
+
++ Parameters
+
+    + timeStart (required, timestamp, `2014-01-01T00:00:00Z`) ... Start of time range
+    + timeEnd (required, timestamp, `2014-01-31T23:59:59`) ... End of time range
+
++ Response 200 (application/json)
+
+  Response is a GeoJSON `FeatureCollection` whose `features` are incidents. The `Feature` will include a `geometry` containing a `Point` which is the incident's location. The feature's `properties` will include a minimal amount of information on the incident. These details are taken from the latest report of that incident - they may not be exactly how they were during that time frame.
+
+  The incidents included in the response are filtered by the time range specified in the request. The incidents will be those that were `current` within that time frame. E.g if you request one day's worth, it may include incidents that were current for an hour during that day, some that had been current for days beforehand but finished on that day, and some that were current for many days before and after.
+
+  + Body
+            {
+                "type":"FeatureCollection",
+                "features":[
+                    {
+                        "type": "Feature",
+                        "id": "0ee1fd01-11bc-4526-8910-5423e63e898c",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                151.6034,
+                                -33.1567
+                            ]
+                        },
+                        "properties": {
+                            "title": "Crangan Bay -West",
+                            "link": "http://www.rfs.nsw.gov.au/dsp_content.cfm?cat_id=683",
+                            "firstSeen": "2013-11-30T06:48:00Z",
+                            "lastSeen": "2013-12-31T05:00:00Z",
+                            "fireType": "Scrub fire"
+                        }
+                    }
+                ]
+            }
