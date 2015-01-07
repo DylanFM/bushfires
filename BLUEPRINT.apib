@@ -13,7 +13,9 @@ Retrieve a collection of incidents. Currently, in lieu of pagination, a time ran
 
 + Response 200 (application/json)
 
-  JSON conforming to the GeoJSON spec. Response is a feature collection containing 0 or more features. Each feature represents an incident. Properties included in the feature object are taken from the incident's most recent report.
+  JSON conforming to the GeoJSON spec. Response is a `FeatureCollection` containing 0 or more features. Each `Feature` represents an incident. Properties included in the feature object are taken from the incident's most recent report.
+
+  This endpoint has the ablity to return very large responses. In the interest of performance, the features within the response contain minimal information. They will not include geographic polygons and all of an incident's properties. They will include coordinates for the incident and an ID for retrieving all of the incident's details.
 
   The incidents included in the response are those that were `current` within the requested time range. E.g if you request one day's worth, it may include incidents that were current for an hour during that day, some that had been current for days beforehand but finished on that day, and some that were current for many days before and after.
 
@@ -26,195 +28,32 @@ Retrieve a collection of incidents. Currently, in lieu of pagination, a time ran
                         "type": "Feature",
                         "id": "0ee1fd01-11bc-4526-8910-5423e63e898c",
                         "geometry": {
-                            "type": "GeometryCollection",
-                            "geometries": [
-                                {
-                                    "type": "Point",
-                                    "coordinates": [
-                                        151.6034,
-                                        -33.1567
-                                    ]
-                                }
+                            "type": "Point",
+                            "coordinates": [
+                                151.6034,
+                                -33.1567
                             ]
                         },
                         "properties": {
-                            "reportUuid": "16d9c09c-aba0-47ce-964f-01aa75b1af10",
-                            "guid": "tag:www.rfs.nsw.gov.au,2013-12-31:84431",
                             "title": "Crangan Bay -West",
                             "link": "http://www.rfs.nsw.gov.au/dsp_content.cfm?cat_id=683",
-                            "category": "Advice",
-                            "pubdate": "2013-12-31T05:00:00Z",
-                            "firstSeen": "2013-11-30T06:48:00Z",
-                            "lastSeen": "2013-12-31T05:00:00Z",
-                            "alertLevel": "Advice",
-                            "location": "500 metres west of Pacific Hwy at Crangan Bay. Same location as previous Incident - No 13113083624.",
-                            "councilArea": "Lake Macquarie",
-                            "status": "under control",
-                            "fireType": "Scrub fire",
-                            "fire": true,
-                            "size": "0 ha",
-                            "responsibleAgency": "Rural Fire Service",
-                            "extra": ""
+                            "fireType": "Scrub fire"
                         }
                     },
                     {
                         "type": "Feature",
                         "id": "176a2772-2589-4fa5-bb21-16af5bcd69fc",
                         "geometry": {
-                            "type": "GeometryCollection",
-                            "geometries": [
-                                {
-                                    "type": "Point",
-                                    "coordinates": [
-                                        145.9021,
-                                        -30.0348
-                                    ]
-                                },
-                                {
-                                    "type": "MultiPolygon",
-                                    "coordinates": [
-                                        [
-                                            [
-                                                [
-                                                    145.9009,
-                                                    -30.0399
-                                                ],
-                                                [
-                                                    145.8996,
-                                                    -30.041
-                                                ],
-                                                [
-                                                    145.8989,
-                                                    -30.0391
-                                                ],
-                                                [
-                                                    145.8989,
-                                                    -30.039
-                                                ],
-                                                [
-                                                    145.9003,
-                                                    -30.0366
-                                                ],
-                                                [
-                                                    145.8992,
-                                                    -30.0351
-                                                ],
-                                                [
-                                                    145.8993,
-                                                    -30.0342
-                                                ],
-                                                [
-                                                    145.9,
-                                                    -30.0329
-                                                ],
-                                                [
-                                                    145.9013,
-                                                    -30.0312
-                                                ],
-                                                [
-                                                    145.9024,
-                                                    -30.0305
-                                                ],
-                                                [
-                                                    145.9023,
-                                                    -30.0296
-                                                ],
-                                                [
-                                                    145.9024,
-                                                    -30.0291
-                                                ],
-                                                [
-                                                    145.9031,
-                                                    -30.0284
-                                                ],
-                                                [
-                                                    145.9036,
-                                                    -30.0287
-                                                ],
-                                                [
-                                                    145.9043,
-                                                    -30.0292
-                                                ],
-                                                [
-                                                    145.905,
-                                                    -30.0297
-                                                ],
-                                                [
-                                                    145.9052,
-                                                    -30.0303
-                                                ],
-                                                [
-                                                    145.9053,
-                                                    -30.0306
-                                                ],
-                                                [
-                                                    145.9052,
-                                                    -30.0316
-                                                ],
-                                                [
-                                                    145.905,
-                                                    -30.0325
-                                                ],
-                                                [
-                                                    145.9048,
-                                                    -30.0333
-                                                ],
-                                                [
-                                                    145.9046,
-                                                    -30.0345
-                                                ],
-                                                [
-                                                    145.9048,
-                                                    -30.0353
-                                                ],
-                                                [
-                                                    145.9032,
-                                                    -30.0369
-                                                ],
-                                                [
-                                                    145.9027,
-                                                    -30.0375
-                                                ],
-                                                [
-                                                    145.9021,
-                                                    -30.0382
-                                                ],
-                                                [
-                                                    145.9018,
-                                                    -30.0388
-                                                ],
-                                                [
-                                                    145.9014,
-                                                    -30.0391
-                                                ],
-                                                [
-                                                    145.9009,
-                                                    -30.0399
-                                                ]
-                                            ]
-                                        ]
-                                    ]
-                                }
+                            "type": "Point",
+                            "coordinates": [
+                                145.9021,
+                                -30.0348
                             ]
                         },
                         "properties": {
-                            "reportUuid": "7872b6a4-2730-4ef8-9e3a-4fa4582cc3df",
-                            "guid": "tag:www.rfs.nsw.gov.au,2013-12-31:151096",
                             "title": "Darling Farms",
                             "link": "http://www.rfs.nsw.gov.au/dsp_content.cfm?cat_id=683",
-                            "category": "Advice",
-                            "pubdate": "2013-12-31T04:00:00Z",
-                            "firstSeen": "2013-12-30T03:05:00Z",
-                            "lastSeen": "2013-12-31T04:00:00Z",
-                            "alertLevel": "Advice",
-                            "location": "North Bourke",
-                            "councilArea": "Bourke",
-                            "status": "under control",
-                            "fireType": "Scrub fire",
-                            "fire": true,
-                            "size": "45 ha",
-                            "responsibleAgency": "Rural Fire Service",
-                            "extra": ""
+                            "fireType": "Scrub fire"
                         }
                     }
                 ]
@@ -225,7 +64,7 @@ Retrieve a collection of current incidents. Current incidents are those that wer
 
 + Response 200 (application/json)
 
-  JSON conforming to the GeoJSON spec. Response is a feature collection containing 0 or more features. Each feature represents an incident. Properties included in the feature object are taken from the incident's most recent report.
+  JSON conforming to the GeoJSON spec. Response is a `FeatureCollection` containing 0 or more `features`. Each `Feature` represents an incident. Properties included in the feature object are taken from the incident's most recent report.
 
   + Body
 
@@ -439,7 +278,7 @@ Retrieve an incident by its *id*.
 
 + Response 200 (application/json)
 
-  JSON conforming to the GeoJSON spec. Response is a feature representing the requested incident. Properties included in the feature object are taken from the incident's most recent report.
+  JSON conforming to the GeoJSON spec. Response is a `Feature` representing the requested incident. Properties included in the feature object are taken from the incident's most recent report.
 
   + Body
 
