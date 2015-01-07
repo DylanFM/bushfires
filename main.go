@@ -130,7 +130,7 @@ func main() {
 
 // GET /incidents
 // Returns a GeoJSON FeatureCollection of incidents filtered by specified time range
-func getIncidents(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *IncidentFeatureCollection, error) {
+func getIncidents(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *MinimalIncidentFeatureCollection, error) {
 
 	timeFormat := "2006-01-02T15:04:05Z"
 
@@ -144,12 +144,12 @@ func getIncidents(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *
 		return 0, nil, nil, tigertonic.BadRequest{err}
 	}
 
-	ifs, err := incidentsWithinTimeRange(timeStart, timeEnd)
+	ifs, err := minimalIncidentsWithinTimeRange(timeStart, timeEnd)
 	if err != nil {
 		return 0, nil, nil, tigertonic.InternalServerError{err}
 	}
 
-	ifc := incidentFeatureCollectionForIncidentFeatures(ifs)
+	ifc := minimalIncidentFeatureCollectionForMinimalIncidentFeatures(ifs)
 
 	return http.StatusOK, nil, &ifc, nil
 }
