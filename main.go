@@ -132,7 +132,7 @@ func main() {
 // Returns a GeoJSON FeatureCollection of incidents filtered by specified time range
 func getIncidents(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *MinimalIncidentFeatureCollection, error) {
 
-	timeFormat := "2006-01-02T15:04:05Z"
+	timeFormat := "2006-01-02T15:04:05-07:00"
 
 	timeStart, err := time.Parse(timeFormat, u.Query().Get("timeStart"))
 	if err != nil {
