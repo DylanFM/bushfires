@@ -132,14 +132,21 @@ func main() {
 // Returns a GeoJSON FeatureCollection of incidents filtered by specified time range
 func getIncidents(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *MinimalIncidentFeatureCollection, error) {
 
+	ts := u.Query().Get("timeStart")
+	te := u.Query().Get("timeEnd")
+
+	if ts == "" || te == "" {
+		return 0, nil, nil, tigertonic.BadRequest{fmt.Errorf("specify a start and end time")}
+	}
+
 	timeFormat := "2006-01-02T15:04:05-07:00"
 
-	timeStart, err := time.Parse(timeFormat, u.Query().Get("timeStart"))
+	timeStart, err := time.Parse(timeFormat, ts)
 	if err != nil {
 		return 0, nil, nil, tigertonic.BadRequest{err}
 	}
 
-	timeEnd, err := time.Parse(timeFormat, u.Query().Get("timeEnd"))
+	timeEnd, err := time.Parse(timeFormat, te)
 	if err != nil {
 		return 0, nil, nil, tigertonic.BadRequest{err}
 	}
@@ -173,7 +180,12 @@ func getCurrentIncidents(u *url.URL, h http.Header, _ interface{}) (int, http.He
 // Returns a GeoJSON FeatureCollection for the given incident UUID.
 func getIncident(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *IncidentFeature, error) {
 
-	fea, err := incidentFeatureForUUID(u.Query().Get("uuid"))
+	uuid := u.Query().Get("uuid")
+	if uuid == "" {
+		return 0, nil, nil, tigertonic.BadRequest{fmt.Errorf("supply an incident UUID")}
+	}
+
+	fea, err := incidentFeatureForUUID(uuid)
 	if err != nil {
 		// Defaulting to 500
 		// TODO handle 404
