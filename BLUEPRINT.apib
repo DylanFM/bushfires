@@ -4,15 +4,67 @@ HOST: http://api.bushfir.es/
 An API to current and previous [RFS](http://www.rfs.nsw.gov.au) major incidents.
 
 # GET /incidents
-Retrieve a collection of incidents which may or may not be filtered by parameters included in the request.
+Retrieve a collection of incidents. Currently, in lieu of pagination, a time range is required for all requests.
 
 + Parameters
 
-    + current = `true` (optional, boolean) ... Boolean value indicating whether to only include current incidents or not.
+    + timeStart (required, timestamp, `2014-01-01T00:00:00+00:00`) ... Start of time range in UTC (ISO 8601)
+    + timeEnd (required, timestamp, `2014-01-31T23:59:59+00:00`) ... End of time range in UTC (ISO 8601)
 
 + Response 200 (application/json)
 
-  JSON conforming to the GeoJSON spec. Response is a feature collection containing 0 or more features. Each feature represents an incident. Properties included in the feature object are taken from the incident's most recent report.
+  JSON conforming to the GeoJSON spec. Response is a `FeatureCollection` containing 0 or more features. Each `Feature` represents an incident. Properties included in the feature object are taken from the incident's most recent report.
+
+  This endpoint has the ablity to return very large responses. In the interest of performance, the features within the response contain minimal information. They will not include geographic polygons and all of an incident's properties. They will include coordinates for the incident and an ID for retrieving all of the incident's details.
+
+  The incidents included in the response are those that were `current` within the requested time range. E.g if you request one day's worth, it may include incidents that were current for an hour during that day, some that had been current for days beforehand but finished on that day, and some that were current for many days before and after.
+
+  + Body
+
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "id": "0ee1fd01-11bc-4526-8910-5423e63e898c",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                151.6034,
+                                -33.1567
+                            ]
+                        },
+                        "properties": {
+                            "title": "Crangan Bay -West",
+                            "link": "http://www.rfs.nsw.gov.au/dsp_content.cfm?cat_id=683",
+                            "fireType": "Scrub fire"
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "id": "176a2772-2589-4fa5-bb21-16af5bcd69fc",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                145.9021,
+                                -30.0348
+                            ]
+                        },
+                        "properties": {
+                            "title": "Darling Farms",
+                            "link": "http://www.rfs.nsw.gov.au/dsp_content.cfm?cat_id=683",
+                            "fireType": "Scrub fire"
+                        }
+                    }
+                ]
+              }
+
+# GET /incidents/current
+Retrieve a collection of current incidents. Current incidents are those that were present in the RFS current incidents feed at the last scheduled import.
+
++ Response 200 (application/json)
+
+  JSON conforming to the GeoJSON spec. Response is a `FeatureCollection` containing 0 or more `features`. Each `Feature` represents an incident. Properties included in the feature object are taken from the incident's most recent report.
 
   + Body
 
@@ -226,7 +278,7 @@ Retrieve an incident by its *id*.
 
 + Response 200 (application/json)
 
-  JSON conforming to the GeoJSON spec. Response is a feature representing the requested incident. Properties included in the feature object are taken from the incident's most recent report.
+  JSON conforming to the GeoJSON spec. Response is a `Feature` representing the requested incident. Properties included in the feature object are taken from the incident's most recent report.
 
   + Body
 
