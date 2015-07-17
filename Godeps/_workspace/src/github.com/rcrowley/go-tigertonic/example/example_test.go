@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/rcrowley/go-tigertonic/mocking"
+	"github.com/dylanfm/bushfires/Godeps/_workspace/src/github.com/rcrowley/go-tigertonic/mocking"
 	"net/http"
 	"testing"
 )

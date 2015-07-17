@@ -5,9 +5,9 @@ import (
 	_ "expvar" // Imported for side-effect of handling /debug/vars.
 	"flag"
 	"fmt"
-	_ "github.com/lib/pq"
-	"github.com/rcrowley/go-metrics"
-	"github.com/rcrowley/go-tigertonic"
+	_ "github.com/dylanfm/bushfires/Godeps/_workspace/src/github.com/lib/pq"
+	"github.com/dylanfm/bushfires/Godeps/_workspace/src/github.com/rcrowley/go-metrics"
+	"github.com/dylanfm/bushfires/Godeps/_workspace/src/github.com/rcrowley/go-tigertonic"
 	"log"
 	"net/http"
 	_ "net/http/pprof" // Imported for side-effect of handling /debug/pprof.
