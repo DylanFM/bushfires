@@ -139,7 +139,7 @@ func getIncidents(u *url.URL, h http.Header, _ interface{}) (int, http.Header, *
 		return 0, nil, nil, tigertonic.BadRequest{fmt.Errorf("specify a start and end time")}
 	}
 
-	timeFormat := "2006-01-02T15:04:05-07:00"
+	timeFormat := "2006-01-02T15:04:05Z"
 
 	timeStart, err := time.Parse(timeFormat, ts)
 	if err != nil {
