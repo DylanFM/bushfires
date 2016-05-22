@@ -36,10 +36,10 @@ func minimalIncidentsWithinTimeRange(timeStart time.Time, timeEnd time.Time) (in
 	// ST_CollectionExtract will filter the collection and return its points
 	stmt, err := db.Prepare(`SELECT DISTINCT ON (i.uuid) incident_uuid,
                               title, link, fire_type,
-                              ST_AsGeoJSON(ST_CollectionExtract(geometry, 1))
+                              ST_AsGeoJSON(ST_Centroid(geometry))
                             FROM incidents i
                             JOIN reports r ON i.uuid = r.incident_uuid
-                            WHERE current_from && tstzrange($1, $2)
+                            WHERE current_from && tstzrange($1, $2) AND ST_IsValid(geometry)
                             ORDER BY i.uuid, r.pubdate DESC`)
 	if err != nil {
 		return
